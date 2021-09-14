@@ -4,6 +4,6 @@ import projectReducer from "./projects";
 
 
 export default combineReducers({
-    projectReducer,
-    bugReducer,
+    projects: projectReducer,
+    bugs: bugReducer,
 })
