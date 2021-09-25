@@ -1,10 +1,12 @@
 import { createAction, createReducer, createSlice } from "@reduxjs/toolkit";
 
+import { createSelector } from "reselect";
+
 //reducers
 let lastID = 0;
 
 const slice = createSlice({
-  name: 'bugs',
+  name: "bugs",
   initialState: [],
   reducers: {
     bugAdded: (bugs, action) => {
@@ -12,7 +14,7 @@ const slice = createSlice({
         id: ++lastID,
         description: action.payload.description,
         resolved: false,
-      }); 
+      });
     },
     bugRemoved: (bugs, action) => {
       const index = bugs.findIndex((bug) => bug.id === action.payload.id);
@@ -25,14 +27,20 @@ const slice = createSlice({
       if (index !== -1) {
         bugs[index].resolved = true;
       }
-    }  
-  }
+    },
+  },
 });
 
 export const { bugAdded, bugResolved, bugRemoved } = slice.actions;
 
 //selectors
-export const getUnresolvedBugs = (state) => state.entities.bugs.filter(bug => !bug.resolved);
+// export const getUnresolvedBugs = (state) => state.entities.bugs.filter(bug => !bug.resolved);
+
+//Implementing Memoization
+export const getUnresolvedBugs = createSelector(
+  (state) => state.entities.bugs,
+  (bugs) => bugs.filter((bug) => !bug.resolved)
+);
 
 export default slice.reducer;
 
@@ -49,7 +57,7 @@ export default slice.reducer;
 //       id: ++lastID,
 //       description: action.payload.description,
 //       resolved: false,
-//     }); 
+//     });
 //   },
 //   [bugRemoved.type]: (bugs, action) => {
 //     const index = bugs.findIndex((bug) => bug.id === action.payload.id);
@@ -63,7 +71,7 @@ export default slice.reducer;
 //       bugs[index].resolved = true;
 //     }
 //   }
-// }); 
+// });
 
 // export default reducer;
 
@@ -76,7 +84,7 @@ export default slice.reducer;
 //           id: ++lastID,
 //           description: action.payload.description,
 //           resolved: false,
-//         },  
+//         },
 //       ];
 //     case bugRemoved.type:
 //       return state.filter((bug) => bug.id !== action.payload.id);
