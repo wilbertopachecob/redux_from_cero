@@ -3,9 +3,13 @@ import {
   bugAdded,
   bugRemoved,
   bugResolved,
+  bugAssingToMember,
   getUnresolvedBugs,
+  getUnassingedBugs,
+  getBugsByMemberId,
 } from "./store/bugs";
 import { projectAdded } from "./store/projects";
+import { memberAdded } from "./store/members";
 
 const store = configureStore();
 
@@ -29,3 +33,9 @@ const y = getUnresolvedBugs(store.getState());
 console.log(x === y);
 
 console.log(getUnresolvedBugs(store.getState()));
+
+store.dispatch(memberAdded({ name: "Wilberto Pacheco Batista" }));
+store.dispatch(bugAssingToMember({ bugId: 3, memberId: 1 }));
+
+console.log(getUnassingedBugs(store.getState()));
+console.log(getBugsByMemberId(1)(store.getState()));

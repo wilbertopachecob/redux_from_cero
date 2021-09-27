@@ -14,13 +14,15 @@ const slice = createSlice({
         id: ++lastID,
         description: action.payload.description,
         resolved: false,
+        memberId: action.payload.memberId,
       });
     },
     bugRemoved: (bugs, action) => {
-      const index = bugs.findIndex((bug) => bug.id === action.payload.id);
-      if (index !== -1) {
-        delete bugs[index];
-      }
+      return bugs.filter((bug) => bug.id !== action.payload.id);
+      // const index = bugs.findIndex((bug) => bug.id === action.payload.id);
+      // if (index !== -1) {
+      //   // delete bugs[index];
+      // }
     },
     bugResolved: (bugs, action) => {
       const index = bugs.findIndex((bug) => bug.id === action.payload.id);
@@ -28,10 +30,17 @@ const slice = createSlice({
         bugs[index].resolved = true;
       }
     },
+    bugAssingToMember: (bugs, action) => {
+      console.log({bugs});
+      const index = bugs.findIndex((bug) => bug.id === action.payload.bugId);
+      if (index !== -1) {
+        bugs[index].memberId = action.payload.memberId;
+      }
+    },
   },
 });
 
-export const { bugAdded, bugResolved, bugRemoved } = slice.actions;
+export const { bugAdded, bugResolved, bugRemoved, bugAssingToMember } = slice.actions;
 
 //selectors
 // export const getUnresolvedBugs = (state) => state.entities.bugs.filter(bug => !bug.resolved);
@@ -40,6 +49,16 @@ export const { bugAdded, bugResolved, bugRemoved } = slice.actions;
 export const getUnresolvedBugs = createSelector(
   (state) => state.entities.bugs,
   (bugs) => bugs.filter((bug) => !bug.resolved)
+);
+
+export const getUnassingedBugs = createSelector(
+  (state) => state.entities.bugs,
+  (bugs) => bugs.filter((bug) => [undefined, null].includes(bug.memberId))
+);
+
+export const getBugsByMemberId = memberId => createSelector(
+  (state) => state.entities.bugs,
+  (bugs) => bugs.filter((bug) => bug.memberId === memberId)
 );
 
 export default slice.reducer;
