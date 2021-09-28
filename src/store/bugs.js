@@ -31,7 +31,6 @@ const slice = createSlice({
       }
     },
     bugAssingToMember: (bugs, action) => {
-      console.log({bugs});
       const index = bugs.findIndex((bug) => bug.id === action.payload.bugId);
       if (index !== -1) {
         bugs[index].memberId = action.payload.memberId;
