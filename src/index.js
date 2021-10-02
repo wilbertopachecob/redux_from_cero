@@ -39,3 +39,5 @@ store.dispatch(bugAssingToMember({ bugId: 3, memberId: 1 }));
 
 console.log(getUnassingedBugs(store.getState()));
 console.log(getBugsByMemberId(1)(store.getState()));
+
+store.dispatch({ type: "error", payload: { message: "An error occured" } });
