@@ -3,12 +3,12 @@
 import reducer from "./reducer.js";
 import { configureStore } from "@reduxjs/toolkit";
 import logger from "./middleware/logger";
-
+import func from "./middleware/func";
 
 export default function () {
   const store = configureStore({
     reducer,
-    middleware: [logger('info')],
+    middleware: [logger("info"), func],
   });
-  return store;  
-};
+  return store;
+}
