@@ -1,4 +1,6 @@
 import { ENV } from "../constants/env";
+import { get as _get } from "lodash";
+
 
 const init = {
   method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -15,7 +17,7 @@ function buildOptions(options) {
     ...options,
   };
 
-  if (options.method.toUpperCase() !== "GET") {
+  if (_get(options, 'method', 'get').toUpperCase() !== "GET") {
     options.headers = {
       "Content-Type": "application/json",
     };
