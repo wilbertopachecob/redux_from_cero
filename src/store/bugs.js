@@ -9,6 +9,10 @@ const slice = createSlice({
   name: "bugs",
   initialState: [],
   reducers: {
+    bugAddBulk: (bugs, action) => {
+      console.log('HERE',action.payload);
+      bugs.push(...action.payload);
+    },
     bugAdded: (bugs, action) => {
       bugs.push({
         id: ++lastID,
@@ -39,7 +43,7 @@ const slice = createSlice({
   },
 });
 
-export const { bugAdded, bugResolved, bugRemoved, bugAssingToMember } = slice.actions;
+export const { bugAdded, bugResolved, bugRemoved, bugAssingToMember, bugAddBulk } = slice.actions;
 
 //selectors
 // export const getUnresolvedBugs = (state) => state.entities.bugs.filter(bug => !bug.resolved);
