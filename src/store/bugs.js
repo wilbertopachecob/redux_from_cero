@@ -2,19 +2,26 @@ import { createAction, createReducer, createSlice } from "@reduxjs/toolkit";
 
 import { createSelector } from "reselect";
 
+import { apiCallBegan } from "./api";
+
+import { REST_ENDPOINTS } from "../constants/rest-endpoints";
+
 //reducers
 let lastID = 0;
 
 const slice = createSlice({
   name: "bugs",
-  initialState: [],
+  initialState: {
+    list: [],
+    loading: false,
+    lastFetch: null,
+  },
   reducers: {
     bugAddBulk: (bugs, action) => {
-      console.log('HERE',action.payload);
-      bugs.push(...action.payload);
+      bugs.list = action.payload;
     },
     bugAdded: (bugs, action) => {
-      bugs.push({
+      bugs.list.push({
         id: ++lastID,
         description: action.payload.description,
         resolved: false,
@@ -22,47 +29,63 @@ const slice = createSlice({
       });
     },
     bugRemoved: (bugs, action) => {
-      return bugs.filter((bug) => bug.id !== action.payload.id);
+      return bugs.list.filter((bug) => bug.id !== action.payload.id);
       // const index = bugs.findIndex((bug) => bug.id === action.payload.id);
       // if (index !== -1) {
       //   // delete bugs[index];
       // }
     },
     bugResolved: (bugs, action) => {
-      const index = bugs.findIndex((bug) => bug.id === action.payload.id);
+      const index = bugs.list.findIndex((bug) => bug.id === action.payload.id);
       if (index !== -1) {
-        bugs[index].resolved = true;
+        bugs.list[index].resolved = true;
       }
     },
     bugAssingToMember: (bugs, action) => {
-      const index = bugs.findIndex((bug) => bug.id === action.payload.bugId);
+      const index = bugs.list.findIndex(
+        (bug) => bug.id === action.payload.bugId
+      );
       if (index !== -1) {
-        bugs[index].memberId = action.payload.memberId;
+        bugs.list[index].memberId = action.payload.memberId;
       }
     },
   },
 });
 
-export const { bugAdded, bugResolved, bugRemoved, bugAssingToMember, bugAddBulk } = slice.actions;
+export const {
+  bugAdded,
+  bugResolved,
+  bugRemoved,
+  bugAssingToMember,
+  bugAddBulk,
+} = slice.actions;
+
+//actions creators
+export const loadBugs = () =>
+  apiCallBegan({
+    url: REST_ENDPOINTS.GET_BUGS,
+    onSucess: bugAddBulk.type,
+  });
 
 //selectors
 // export const getUnresolvedBugs = (state) => state.entities.bugs.filter(bug => !bug.resolved);
 
 //Implementing Memoization
 export const getUnresolvedBugs = createSelector(
-  (state) => state.entities.bugs,
+  (state) => state.entities.bugs.list,
   (bugs) => bugs.filter((bug) => !bug.resolved)
 );
 
 export const getUnassingedBugs = createSelector(
-  (state) => state.entities.bugs,
+  (state) => state.entities.bugs.list,
   (bugs) => bugs.filter((bug) => [undefined, null].includes(bug.memberId))
 );
 
-export const getBugsByMemberId = memberId => createSelector(
-  (state) => state.entities.bugs,
-  (bugs) => bugs.filter((bug) => bug.memberId === memberId)
-);
+export const getBugsByMemberId = (memberId) =>
+  createSelector(
+    (state) => state.entities.bugs.list,
+    (bugs) => bugs.filter((bug) => bug.memberId === memberId)
+  );
 
 export default slice.reducer;
 
