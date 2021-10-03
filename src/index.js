@@ -1,6 +1,6 @@
 import configureStore from "./store/configureStore";
 import {
-  bugAddBulk,
+  loadBugs,
   bugAdded,
   bugRemoved,
   bugResolved,
@@ -47,13 +47,7 @@ const unsubscribe = store.subscribe(() => {
 // const HOST = 'http://localhost:9001/api/';
 // fetch(HOST+'bugs').then(response => response.json()).then(console.log);
 
-store.dispatch(
-  apiCallBegan({
-    url: "bugs",
-    method: "GET",
-    onSucess: 'bugAddBulk',
-  })
-);
+store.dispatch(loadBugs());
 
 // store.dispatch({
 //   type: apiCallBegan.type,
