@@ -1,7 +1,6 @@
 import { ENV } from "../constants/env";
 import { get as _get } from "lodash";
 
-
 const init = {
   method: "GET", // *GET, POST, PUT, DELETE, etc.
   mode: "cors", // no-cors, *cors, same-origin
@@ -12,16 +11,20 @@ const init = {
 };
 
 function buildOptions(options) {
+  options.method = options.method || 'GET';
   options = {
     ...init,
     ...options,
   };
 
-  if (_get(options, 'method', 'get').toUpperCase() !== "GET") {
-    options.headers = {
-      "Content-Type": "application/json",
+  if (options.method.toUpperCase() !== "GET") {
+    options = {
+      ...options,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(options.body || {}),
     };
-    options.body = JSON.stringify(options.body || {});
   }
   return options;
 }
