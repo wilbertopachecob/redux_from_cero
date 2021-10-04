@@ -1,5 +1,5 @@
 import { ENV } from "../constants/env";
-import { get as _get } from "lodash";
+import { get as _get, assignIn as _assignIn } from "lodash";
 
 const init = {
   method: "GET", // *GET, POST, PUT, DELETE, etc.
@@ -11,20 +11,19 @@ const init = {
 };
 
 function buildOptions(options) {
-  options.method = options.method || 'GET';
+  options.method = options.method || "GET";
   options = {
     ...init,
     ...options,
   };
 
   if (options.method.toUpperCase() !== "GET") {
-    options = {
-      ...options,
+    _assignIn(options, {
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(options.body || {}),
-    };
+    });
   }
   return options;
 }
