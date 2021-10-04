@@ -9,24 +9,28 @@ const api =
       return next(action);
     }
 
+    const { url, method, data, onStart, onSucess, onFail } = action.payload;
+
+    if (onStart) {
+      dispatch({ type: onStart });
+    }
+
     next(action);
-    const { url, method, data, onSucess, onFail } = action.payload;
+
     try {
       const payload = await fetch(url, { method, data });
-      if (!onSucess) {
-        dispatch(actions.apiCallSuccess(payload));  
-        return
+      dispatch(actions.apiCallSuccess(payload));
+      if (onSucess) {
+        dispatch({
+          type: onSucess,
+          payload,
+        });
       }
-      dispatch({
-        type: onSucess,
-        payload,
-      });
     } catch (error) {
-      if (!onFail) {
-        dispatch(actions.apiCallFailed(error));
-        return;
+      dispatch(actions.apiCallFailed(error.message));
+      if (onFail) {
+        dispatch({ type: onFail, payload: error.message });
       }
-      dispatch({ type: "error", payload: error });
     }
     // dispatch(onSucess(newAction.payload));
   };
