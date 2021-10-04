@@ -17,8 +17,16 @@ const slice = createSlice({
     lastFetch: null,
   },
   reducers: {
+    bugRequested: (bugs, action) => {
+      bugs.loading = true;
+    },
+    bugRequestFailed: (bugs, action) => {
+      bugs.loading = false;
+    },
     bugAddBulk: (bugs, action) => {
       bugs.list = action.payload;
+      // bugRequestFailed();
+      bugs.loading = false;
     },
     bugAdded: (bugs, action) => {
       bugs.list.push({
@@ -58,13 +66,17 @@ export const {
   bugRemoved,
   bugAssingToMember,
   bugAddBulk,
+  bugRequested,
+  bugRequestFailed,
 } = slice.actions;
 
 //actions creators
 export const loadBugs = () =>
   apiCallBegan({
     url: REST_ENDPOINTS.GET_BUGS,
+    onStart: bugRequested.type,
     onSucess: bugAddBulk.type,
+    onFail: bugRequestFailed.type,
   });
 
 //selectors
