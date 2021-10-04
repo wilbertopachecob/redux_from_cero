@@ -11,7 +11,6 @@ import {
 } from "./store/bugs";
 import { projectAdded } from "./store/projects";
 import { memberAdded } from "./store/members";
-import { apiCallBegan, apiCallFailed, apiCallSuccess } from "./store/api";
 
 const store = configureStore();
 
@@ -44,44 +43,4 @@ const unsubscribe = store.subscribe(() => {
 
 // store.dispatch({ type: "error", payload: { message: "An error occured" } });
 
-// const HOST = 'http://localhost:9001/api/';
-// fetch(HOST+'bugs').then(response => response.json()).then(console.log);
-
 store.dispatch(loadBugs());
-
-// store.dispatch({
-//   type: apiCallBegan.type,
-//   payload: {
-//     url: "bugs",
-//     method: "GET",
-//     // onSucess: "bugAddBulk",
-//     onSucess: bugAddBulk,
-//     onFail: "error",
-//   },
-// });
-
-// store.dispatch({
-//   type: "bugAddBulk",
-//   payload: [
-//     {
-//       id: 1,
-//       description: "Bug 1",
-//       userId: 1,
-//       resolved: true,
-//     },
-//     {
-//       id: 2,
-//       description: "Bug 2",
-//       userId: 1,
-//     },
-//     {
-//       id: 3,
-//       description: "Bug 3",
-//       userId: 2,
-//     },
-//     {
-//       id: 4,
-//       description: "Bug 4",
-//     },
-//   ],
-// });
