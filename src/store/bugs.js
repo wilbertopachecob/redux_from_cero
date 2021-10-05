@@ -1,10 +1,12 @@
 import { createAction, createReducer, createSlice } from "@reduxjs/toolkit";
 
 import { createSelector } from "reselect";
-
+import { differenceInMinutes } from "date-fns";
 import { apiCallBegan } from "./api";
 
 import { REST_ENDPOINTS } from "../constants/rest-endpoints";
+
+const CACHE_LIMIT = 10;
 
 //reducers
 let lastID = 0;
@@ -27,6 +29,7 @@ const slice = createSlice({
       bugs.list = action.payload;
       // bugRequestFailed();
       bugs.loading = false;
+      bugs.lastFetch = Date.now();
     },
     bugAdded: (bugs, action) => {
       bugs.list.push({
@@ -71,13 +74,20 @@ export const {
 } = slice.actions;
 
 //actions creators
-export const loadBugs = () =>
-  apiCallBegan({
-    url: REST_ENDPOINTS.GET_BUGS,
-    onStart: bugRequested.type,
-    onSucess: bugAddBulk.type,
-    onFail: bugRequestFailed.type,
-  });
+export const loadBugs =
+  () =>
+  (dispatch, getState ) => {
+    const { lastFetch } = getState().entities.bugs;
+    if(differenceInMinutes(lastFetch, Date.now()) < CACHE_LIMIT) {
+      return;
+    }
+    dispatch(apiCallBegan({
+      url: REST_ENDPOINTS.GET_BUGS,
+      onStart: bugRequested.type,
+      onSucess: bugAddBulk.type,
+      onFail: bugRequestFailed.type,
+    }));
+  };
 
 //selectors
 // export const getUnresolvedBugs = (state) => state.entities.bugs.filter(bug => !bug.resolved);
