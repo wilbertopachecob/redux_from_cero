@@ -8,9 +8,9 @@ import { REST_ENDPOINTS } from "../constants/rest-endpoints";
 
 const CACHE_LIMIT = 10;
 
-//reducers
-let lastID = 0;
+// let lastID = 0;
 
+//reducers
 const slice = createSlice({
   name: "bugs",
   initialState: {
@@ -32,12 +32,13 @@ const slice = createSlice({
       bugs.lastFetch = Date.now();
     },
     bugAdded: (bugs, action) => {
-      bugs.list.push({
-        id: ++lastID,
-        description: action.payload.description,
-        resolved: false,
-        memberId: action.payload.memberId,
-      });
+      // bugs.list.push({
+      //   id: ++lastID,
+      //   description: action.payload.description,
+      //   resolved: false,
+      //   memberId: action.payload.memberId,
+      // });
+      bugs.list.push(action.payload);
     },
     bugRemoved: (bugs, action) => {
       return bugs.list.filter((bug) => bug.id !== action.payload.id);
@@ -53,11 +54,9 @@ const slice = createSlice({
       }
     },
     bugAssingToMember: (bugs, action) => {
-      const index = bugs.list.findIndex(
-        (bug) => bug.id === action.payload.bugId
-      );
+      const index = bugs.list.findIndex((bug) => bug.id === action.payload.id);
       if (index !== -1) {
-        bugs.list[index].memberId = action.payload.memberId;
+        bugs.list[index].userId = action.payload.userId;
       }
     },
   },
@@ -74,20 +73,50 @@ export const {
 } = slice.actions;
 
 //actions creators
-export const loadBugs =
-  () =>
-  (dispatch, getState ) => {
-    const { lastFetch } = getState().entities.bugs;
-    if(differenceInMinutes(lastFetch, Date.now()) < CACHE_LIMIT) {
-      return;
-    }
-    dispatch(apiCallBegan({
+export const loadBugs = () => (dispatch, getState) => {
+  const { lastFetch } = getState().entities.bugs;
+  if (differenceInMinutes(lastFetch, Date.now()) < CACHE_LIMIT) {
+    return;
+  }
+  dispatch(
+    apiCallBegan({
       url: REST_ENDPOINTS.GET_BUGS,
       onStart: bugRequested.type,
       onSucess: bugAddBulk.type,
       onFail: bugRequestFailed.type,
-    }));
-  };
+    })
+  );
+};
+
+export const addBug = (bug) => (dispatch) =>
+  dispatch(
+    apiCallBegan({
+      url: REST_ENDPOINTS.ADD_BUG,
+      method: "POST",
+      data: bug,
+      onSucess: bugAdded.type,
+    })
+  );
+
+export const resolveBug = (bug) => (dispatch) =>
+  dispatch(
+    apiCallBegan({
+      url: REST_ENDPOINTS.UPDATE_BUG + bug.id,
+      method: "PATCH",
+      data: { resolve: true },
+      onSucess: bugResolved.type,
+    })
+  );
+
+export const assingBugToMember = (bug) => (dispatch) =>
+  dispatch(
+    apiCallBegan({
+      url: REST_ENDPOINTS.UPDATE_BUG + bug.id,
+      method: "PATCH",
+      data: { userId: bug.userId },
+      onSucess: bugAssingToMember.type,
+    })
+  );
 
 //selectors
 // export const getUnresolvedBugs = (state) => state.entities.bugs.filter(bug => !bug.resolved);
