@@ -1,7 +1,7 @@
 import { ENV } from "../constants/env";
-import { get as _get, assignIn as _assignIn } from "lodash";
+import { get as _get, assignIn as _assignIn, clone as _clone } from "lodash";
 
-const init = {
+const INIT = {
   method: "GET", // *GET, POST, PUT, DELETE, etc.
   mode: "cors", // no-cors, *cors, same-origin
   cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -12,25 +12,22 @@ const init = {
 
 function buildOptions(options) {
   options.method = options.method || "GET";
-  options = {
-    ...init,
-    ...options,
-  };
-
+  const init = _clone(INIT);
   if (options.method.toUpperCase() !== "GET") {
-    _assignIn(options, {
+    _assignIn(init, {
+      method: options.method,
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(options.body || {}),
+      body: JSON.stringify(options.data || {}),
     });
   }
-  return options;
+  return init;
 }
 
 async function fetchWrapper(url, options) {
-  options = buildOptions(options);
-  const result = await fetch(ENV.HOST + url, options);
+  const init = buildOptions(options);
+  const result = await fetch(ENV.HOST + url, init);
   return result.json();
 }
 
