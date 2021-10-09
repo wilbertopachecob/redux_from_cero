@@ -2,9 +2,14 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const morgan = require('morgan');
 
 app.use(cors());
 app.use(bodyParser.json());
+morgan.token('body', req => {
+  return JSON.stringify(req.body)
+})
+app.use(morgan(':method :url :status :response-time ms - :res[content-length] :body'));
 
 const bugs = [
   { id: 1, description: "Bug 1", userId: 1, resolved: true },
