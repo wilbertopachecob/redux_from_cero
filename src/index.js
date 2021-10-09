@@ -1,6 +1,9 @@
 import configureStore from "./store/configureStore";
 import {
   loadBugs,
+  addBug, 
+  resolveBug,
+  assingBugToMember,
   bugAdded,
   bugRemoved,
   bugResolved,
@@ -44,3 +47,6 @@ const unsubscribe = store.subscribe(() => {
 // store.dispatch({ type: "error", payload: { message: "An error occured" } });
 
 store.dispatch(loadBugs());
+store.dispatch(addBug({ description: "My stored bug" }));
+store.dispatch(resolveBug({id: 1633803904496}));
+store.dispatch(assingBugToMember({id: 1633803904496, userId: 1}));
