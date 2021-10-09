@@ -62,7 +62,7 @@ const slice = createSlice({
   },
 });
 
-export const {
+const {
   bugAdded,
   bugResolved,
   bugRemoved,
@@ -98,10 +98,10 @@ export const addBug = (bug) => (dispatch) =>
     })
   );
 
-export const resolveBug = (bug) => (dispatch) =>
+export const resolveBug = (id) => (dispatch) =>
   dispatch(
     apiCallBegan({
-      url: REST_ENDPOINTS.UPDATE_BUG + bug.id,
+      url: REST_ENDPOINTS.UPDATE_BUG + id,
       method: "PATCH",
       data: { resolve: true },
       onSucess: bugResolved.type,

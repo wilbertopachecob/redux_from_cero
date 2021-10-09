@@ -4,13 +4,6 @@ import {
   addBug, 
   resolveBug,
   assingBugToMember,
-  bugAdded,
-  bugRemoved,
-  bugResolved,
-  bugAssingToMember,
-  getUnresolvedBugs,
-  getUnassingedBugs,
-  getBugsByMemberId,
 } from "./store/bugs";
 import { projectAdded } from "./store/projects";
 import { memberAdded } from "./store/members";
@@ -48,5 +41,5 @@ const unsubscribe = store.subscribe(() => {
 
 store.dispatch(loadBugs());
 store.dispatch(addBug({ description: "My stored bug" }));
-store.dispatch(resolveBug({id: 1633803904496}));
+store.dispatch(resolveBug(1633803904496));
 store.dispatch(assingBugToMember({id: 1633803904496, userId: 1}));
