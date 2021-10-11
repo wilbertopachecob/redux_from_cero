@@ -3,7 +3,7 @@ const toast = (store) => (next) => (action) => {
     console.error(`Toastify: `, action.payload.message);
     return;
   }
-  next(action);
+  return next(action);
 };
 
 export default toast;
