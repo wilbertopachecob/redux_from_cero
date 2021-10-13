@@ -1,5 +1,5 @@
 import configureStore from "../configureStore";
-import { addBug, resolveBug } from "../bugs";
+import { addBug, resolveBug, getUnresolvedBugs } from "../bugs";
 
 describe("bugsSlice - ", () => {
   let store;
@@ -16,9 +16,17 @@ describe("bugsSlice - ", () => {
       return Promise.reject(error);
     });
 
+  const createStore = (list = []) => ({
+    entities: {
+      bugs: {
+        list,
+      },
+    },
+  });
+
   describe("addBug", () => {
     it("should add the bug to the store if its saved to the server", async () => {
-      //appliying Arrange/Act/Assert or AAA
+      //applying Arrange/Act/Assert or AAA
       const bug = { description: "a" };
       const savedBug = { ...bug, id: 1 };
       global.fetch = mockFetch(savedBug);
@@ -31,7 +39,7 @@ describe("bugsSlice - ", () => {
 
     it("should not add the bug to the store if its saved to the server", async () => {
       const bug = { description: "a" };
-      global.fetch = mockFetch(null, 404, new Error("Network error"));
+      global.fetch = mockFetch(null, 500, new Error("Internal Server Error"));
 
       await store.dispatch(addBug(bug));
 
@@ -40,20 +48,46 @@ describe("bugsSlice - ", () => {
   });
 
   describe("resolveBug", () => {
-    it("should resolve a bug", async () => {
-      const bug = { description: "a" };
-      const savedBug = { ...bug, id: 1, resolved: false };
-      global.fetch = mockFetch(savedBug);
+    const id = 1;
+    const bug = { id, resolved: false };
+    const resolvedBug = { id, resolved: true };
 
-      await store.dispatch(addBug(bug));
+    it("should resolve a bug when updated on server ", async () => {
+      global.fetch = mockFetch(bug);
+
+      await store.dispatch(addBug({}));
+
+      expect(bugsSlice().list).toHaveLength(1);
+      
+      global.fetch = mockFetch(resolvedBug);
+
+      await store.dispatch(resolveBug(id));
+
+      expect(bugsSlice().list[0].resolved).toBe(true);
+    });
+
+    it("should not resolve a bug when not updated on server ", async () => {
+      global.fetch = mockFetch(bug);
+
+      await store.dispatch(addBug({}));
 
       expect(bugsSlice().list).toHaveLength(1);
 
-      const resolvedBug = { ...savedBug, resolved: true };
-      global.fetch = mockFetch(resolvedBug);
+      global.fetch = mockFetch(resolvedBug, 500, new Error("Internal Server Error"));
 
-      await store.dispatch(resolveBug(savedBug.id));
-      expect(bugsSlice().list[0]).toEqual(resolvedBug);
+      await store.dispatch(resolveBug(id));
+
+      expect(bugsSlice().list[0].resolved).toBe(false);
+    });
+  });
+
+  describe("selectors", () => {
+    test("getUnresolvedBugs", () => {
+      const store = createStore([{ resolved: true }, {}, {}]);
+
+      const result = getUnresolvedBugs(store);
+
+      expect(result).toHaveLength(2);
     });
   });
 });
