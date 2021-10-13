@@ -129,13 +129,13 @@ export const getUnresolvedBugs = createSelector(
 
 export const getUnassingedBugs = createSelector(
   (state) => state.entities.bugs.list,
-  (bugs) => bugs.filter((bug) => [undefined, null].includes(bug.memberId))
+  (bugs) => bugs.filter((bug) => [undefined, null].includes(bug.userId))
 );
 
-export const getBugsByMemberId = (memberId) =>
+export const getBugsByUserId = (userId) =>
   createSelector(
     (state) => state.entities.bugs.list,
-    (bugs) => bugs.filter((bug) => bug.memberId === memberId)
+    (bugs) => bugs.filter((bug) => bug.userId === userId)
   );
 
 export default slice.reducer;
