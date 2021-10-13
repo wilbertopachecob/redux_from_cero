@@ -78,7 +78,7 @@ export const loadBugs = () => (dispatch, getState) => {
   if (differenceInMinutes(lastFetch, Date.now()) < CACHE_LIMIT) {
     return;
   }
-  dispatch(
+  return dispatch(
     apiCallBegan({
       url: REST_ENDPOINTS.GET_BUGS,
       onStart: bugRequested.type,
