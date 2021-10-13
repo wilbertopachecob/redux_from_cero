@@ -1,5 +1,7 @@
 import configureStore from "../configureStore";
-import { addBug, resolveBug, getUnresolvedBugs } from "../bugs";
+import { addBug, resolveBug, getUnresolvedBugs, loadBugs } from "../bugs";
+
+const SERVER_ERROR = new Error("Internal Server Error");
 
 describe("bugsSlice - ", () => {
   let store;
@@ -39,7 +41,7 @@ describe("bugsSlice - ", () => {
 
     it("should not add the bug to the store if its saved to the server", async () => {
       const bug = { description: "a" };
-      global.fetch = mockFetch(null, 500, new Error("Internal Server Error"));
+      global.fetch = mockFetch(null, 500, SERVER_ERROR);
 
       await store.dispatch(addBug(bug));
 
@@ -58,7 +60,7 @@ describe("bugsSlice - ", () => {
       await store.dispatch(addBug({}));
 
       expect(bugsSlice().list).toHaveLength(1);
-      
+
       global.fetch = mockFetch(resolvedBug);
 
       await store.dispatch(resolveBug(id));
@@ -73,7 +75,7 @@ describe("bugsSlice - ", () => {
 
       expect(bugsSlice().list).toHaveLength(1);
 
-      global.fetch = mockFetch(resolvedBug, 500, new Error("Internal Server Error"));
+      global.fetch = mockFetch(resolvedBug, 500, SERVER_ERROR);
 
       await store.dispatch(resolveBug(id));
 
@@ -88,6 +90,27 @@ describe("bugsSlice - ", () => {
       const result = getUnresolvedBugs(store);
 
       expect(result).toHaveLength(2);
+    });
+  });
+
+  describe("loadBugs", () => {
+    describe("return from cache if the exist in the cache", () => {});
+    describe("loading", () => {
+      it("should set loading to false after returning bugs from server", async () => {
+        global.fetch = mockFetch([{}]);
+
+        await store.dispatch(loadBugs());
+
+        expect(bugsSlice().loading).toBe(false);
+      });
+
+      it("should set loading to false if the server fails", async () => {
+        global.fetch = mockFetch(null, 500, SERVER_ERROR);
+
+        await store.dispatch(loadBugs());
+
+        expect(bugsSlice().loading).toBe(false);
+      });
     });
   });
 });
