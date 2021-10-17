@@ -103,7 +103,7 @@ export const resolveBug = (id) => (dispatch) =>
     apiCallBegan({
       url: REST_ENDPOINTS.UPDATE_BUG + id,
       method: "PATCH",
-      data: { resolve: true },
+      data: { resolved: true },
       onSucess: bugResolved.type,
     })
   );
