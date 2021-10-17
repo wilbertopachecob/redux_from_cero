@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { getUnresolvedBugs, loadBugs } from '../store/bugs';
+import { getUnresolvedBugs, loadBugs, resolveBug } from '../store/bugs';
 
 const BugsList = () => {
 
@@ -17,7 +17,7 @@ const BugsList = () => {
         <div>
           <ul>
             {bugs.map((bug) => (
-              <li key={bug.id}>{bug.description}</li>
+              <li key={bug.id}>{bug.description}<button onClick={() => dispatch(resolveBug(bug.id))}>Resolve</button></li>
             ))}
           </ul>
         </div>
