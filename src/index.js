@@ -46,16 +46,16 @@
 
 import ReactDOM from "react-dom";
 import React from "react";
-import Bugs from "./components/Bugs.jsx";
 import configureStore from "./store/configureStore";
 import { Provider } from "react-redux";
+import BugsList from "./components/BugsList.jsx";
 
 const store = configureStore();
 
 const App = () => {
   return (
     <Provider store={store}>
-      <Bugs />
+      <BugsList />
     </Provider>
   );
 };
