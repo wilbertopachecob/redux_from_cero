@@ -1,7 +1,7 @@
 // import configureStore from "./store/configureStore";
 // import {
 //   loadBugs,
-//   addBug, 
+//   addBug,
 //   resolveBug,
 //   assingBugToMember,
 // } from "./store/bugs";
@@ -44,10 +44,19 @@
 // store.dispatch(resolveBug(1633803904496));
 // store.dispatch(assingBugToMember({id: 1633803904496, userId: 1}));
 
-import ReactDOM from 'react-dom';
-import React from 'react';
+import ReactDOM from "react-dom";
+import React from "react";
 import Bugs from "./components/Bugs.jsx";
+import StoreContext from "./contexts/storeContext";
+import configureStore from "./store/configureStore";
+
+const store = configureStore();
+
 const App = () => {
- return <Bugs />;
- }
-ReactDOM.render(<App />, document.getElementById('app'));
+  return (
+    <StoreContext.Provider value={store}>
+      <Bugs />
+    </StoreContext.Provider>
+  );
+};
+ReactDOM.render(<App />, document.getElementById("app"));
