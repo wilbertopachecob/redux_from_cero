@@ -49,6 +49,7 @@ import React from "react";
 import configureStore from "./store/configureStore";
 import { Provider } from "react-redux";
 import BugsList from "./components/BugsList.jsx";
+import Bugs from "./components/Bugs.jsx";
 
 const store = configureStore();
 
@@ -56,6 +57,7 @@ const App = () => {
   return (
     <Provider store={store}>
       <BugsList />
+      <Bugs />
     </Provider>
   );
 };
