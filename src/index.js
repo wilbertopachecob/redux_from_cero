@@ -47,16 +47,16 @@
 import ReactDOM from "react-dom";
 import React from "react";
 import Bugs from "./components/Bugs.jsx";
-import StoreContext from "./contexts/storeContext";
 import configureStore from "./store/configureStore";
+import { Provider } from "react-redux";
 
 const store = configureStore();
 
 const App = () => {
   return (
-    <StoreContext.Provider value={store}>
+    <Provider store={store}>
       <Bugs />
-    </StoreContext.Provider>
+    </Provider>
   );
 };
 ReactDOM.render(<App />, document.getElementById("app"));
